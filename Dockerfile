@@ -11,7 +11,9 @@ WORKDIR /app
 RUN apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
-RUN pip install --upgrade pip setuptools wheel && pip install -r requirements.txt
+RUN pip install --upgrade pip "setuptools>=78.1.1" wheel \
+ && pip install -r requirements.txt \
+ && find / -xdev -name 'setuptools-[0-7][0-9].*' -not -path '/proc/*' -exec rm -rf {} + 2>/dev/null || true
 
 COPY app ./app
 
