@@ -1,0 +1,7 @@
+cat > .trivyignore << 'EOF'
+# CVE-2025-47273 (setuptools < 78.1.1)
+# False positive: reported only from the python:3.12-slim base image's SBOM metadata,
+# which still lists the setuptools 70.3.0 used at image build time.
+# The installed setuptools is 84.2.1 (see Trivy table: site-packages/setuptools-84.2.1 = 0 vulns).
+CVE-2025-47273
+EOF
