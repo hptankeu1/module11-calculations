@@ -78,13 +78,16 @@ jobs:
           ignore-unfixed: true
           severity: CRITICAL,HIGH
 
+
   deploy:
     name: Push to Docker Hub
     needs: security
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+
+      - uses: docker/setup-qemu-action@v3
 
       - uses: docker/setup-buildx-action@v3
 
@@ -98,19 +101,9 @@ jobs:
         with:
           context: .
           push: true
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           tags: |
-            ${{ env.IMAGE_NAME }}:latest
-            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/module11-calculations:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/module11-calculations:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Trivy vulnerability scan
-        uses: aquasecurity/trivy-action@0.35.0
-        with:
-          image-ref: module11-calculations:scan
-          format: table
-          exit-code: "1"
-          ignore-unfixed: true
-          severity: CRITICAL,HIGH
-          trivyignores: .trivyignore
